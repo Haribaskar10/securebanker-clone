@@ -2,15 +2,26 @@
 import { CreditCard, Shield, TrendingUp, IndianRupee, Clock, Globe, Users, Key, MessageSquare, Lock } from "lucide-react";
 import Layout from "@/components/Layout";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
+import { servicesData } from "@/data/services";
 
-const ServiceCard = ({ title, description, icon: Icon, className }: {
+const ServiceCard = ({ id, title, description, icon: Icon, className }: {
+  id: string;
   title: string;
   description: string;
   icon: React.ElementType;
   className?: string;
 }) => {
+  const navigate = useNavigate();
+  
   return (
-    <div className={cn("glass-card p-6 rounded-lg h-full", className)}>
+    <div 
+      className={cn(
+        "glass-card p-6 rounded-lg h-full cursor-pointer hover:shadow-md transition-all transform hover:-translate-y-1", 
+        className
+      )}
+      onClick={() => navigate(`/services/${id}`)}
+    >
       <div className="mb-4 text-bank-blue">
         <Icon size={36} />
       </div>
@@ -21,68 +32,7 @@ const ServiceCard = ({ title, description, icon: Icon, className }: {
 };
 
 const Services = () => {
-  const services = [
-    {
-      title: "Online Banking",
-      description: "Access your accounts, transfer funds, and manage your finances anytime, anywhere with our secure online banking platform.",
-      icon: Globe,
-    },
-    {
-      title: "Mobile Banking",
-      description: "Bank on the go with our feature-rich mobile app that offers all the functionality of online banking in the palm of your hand.",
-      icon: MessageSquare,
-    },
-    {
-      title: "Savings Accounts",
-      description: "Build your savings with our range of accounts offering competitive interest rates and flexible access to your funds.",
-      icon: IndianRupee,
-    },
-    {
-      title: "Credit Cards",
-      description: "Choose from our selection of credit cards with rewards, cashback, and special offers tailored to your lifestyle.",
-      icon: CreditCard,
-    },
-    {
-      title: "Personal Loans",
-      description: "Fulfill your dreams with our quick and hassle-free personal loans at attractive interest rates.",
-      icon: TrendingUp,
-    },
-    {
-      title: "Home Loans",
-      description: "Make your dream home a reality with our flexible home loan options suited to diverse needs and budgets.",
-      icon: Key,
-    },
-    {
-      title: "Fixed Deposits",
-      description: "Grow your wealth with our fixed deposit schemes offering guaranteed returns and flexible tenure options.",
-      icon: Clock,
-    },
-    {
-      title: "Investment Services",
-      description: "Plan for your future with our range of investment products designed to help you achieve your financial goals.",
-      icon: TrendingUp,
-    },
-    {
-      title: "Insurance",
-      description: "Protect yourself and your loved ones with our comprehensive life, health, and general insurance solutions.",
-      icon: Shield,
-    },
-    {
-      title: "Corporate Banking",
-      description: "Tailored financial solutions for businesses of all sizes, from startups to multinational corporations.",
-      icon: Users,
-    },
-    {
-      title: "Digital Security",
-      description: "Bank with confidence knowing your transactions are protected by our state-of-the-art security systems.",
-      icon: Lock,
-    },
-    {
-      title: "24/7 Customer Support",
-      description: "Our dedicated support team is available round the clock to assist you with any banking queries or concerns.",
-      icon: MessageSquare,
-    },
-  ];
+  const navigate = useNavigate();
 
   return (
     <Layout>
@@ -96,9 +46,10 @@ const Services = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, index) => (
+            {servicesData.map((service, index) => (
               <ServiceCard 
                 key={index} 
+                id={service.id}
                 title={service.title} 
                 description={service.description} 
                 icon={service.icon} 
