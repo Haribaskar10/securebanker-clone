@@ -13,7 +13,9 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [generalError, setGeneralError] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -24,14 +26,36 @@ const Login = () => {
     { email: 'test@sbi.com', password: 'test123' }
   ];
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    
+    // Clear previous errors
+    setEmailError('');
+    setPasswordError('');
+    setGeneralError('');
 
-    if (!email || !password) {
-      setError('Please fill in all fields');
-      return;
+    // Validate form fields
+    let isValid = true;
+
+    if (!email) {
+      setEmailError('Email is required');
+      isValid = false;
+    } else if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      isValid = false;
     }
+
+    if (!password) {
+      setPasswordError('Password is required');
+      isValid = false;
+    }
+
+    if (!isValid) return;
 
     try {
       setIsLoading(true);
@@ -51,11 +75,17 @@ const Login = () => {
         });
         navigate('/dashboard');
       } else {
-        // Show error for demo purposes
-        setError('Invalid email or password');
+        // Check if email exists but password is wrong
+        const emailExists = dummyCredentials.some(cred => cred.email === email);
+        
+        if (emailExists) {
+          setPasswordError('Incorrect password');
+        } else {
+          setGeneralError('Invalid email or password');
+        }
       }
     } catch (err) {
-      setError('An error occurred during login');
+      setGeneralError('An error occurred during login');
       console.error('Login error:', err);
     } finally {
       setIsLoading(false);
@@ -76,10 +106,10 @@ const Login = () => {
           </div>
 
           <div className="glass-card p-8 rounded-xl">
-            {error && (
+            {generalError && (
               <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 text-red-800">
                 <AlertCircle className="h-5 w-5 flex-shrink-0 text-red-500 mt-0.5" />
-                <span>{error}</span>
+                <span>{generalError}</span>
               </div>
             )}
 
@@ -96,10 +126,13 @@ const Login = () => {
                     placeholder="you@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
+                    className={`pl-10 ${emailError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                    aria-invalid={!!emailError}
                   />
                 </div>
+                {emailError && (
+                  <p className="text-sm text-red-500 mt-1">{emailError}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -119,8 +152,8 @@ const Login = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
-                    required
+                    className={`pl-10 pr-10 ${passwordError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
+                    aria-invalid={!!passwordError}
                   />
                   <button
                     type="button"
@@ -134,6 +167,9 @@ const Login = () => {
                     )}
                   </button>
                 </div>
+                {passwordError && (
+                  <p className="text-sm text-red-500 mt-1">{passwordError}</p>
+                )}
               </div>
 
               <Button type="submit" className="w-full bg-bank-blue hover:bg-bank-dark-blue" disabled={isLoading}>
