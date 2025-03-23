@@ -17,6 +17,13 @@ const Login = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  // Dummy credentials for testing
+  const dummyCredentials = [
+    { email: 'demo@example.com', password: 'password' },
+    { email: 'user@sbi.com', password: 'sbi123' },
+    { email: 'test@sbi.com', password: 'test123' }
+  ];
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -32,8 +39,12 @@ const Login = () => {
       // For this demo, we'll simulate a login after a short delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // For demo purposes, let's check for a specific demo login
-      if (email === 'demo@example.com' && password === 'password') {
+      // Check if the credentials match any of our dummy credentials
+      const validCredential = dummyCredentials.find(
+        cred => cred.email === email && cred.password === password
+      );
+      
+      if (validCredential) {
         toast({
           title: 'Login Successful',
           description: 'Welcome back to SecureBank!',
@@ -139,7 +150,12 @@ const Login = () => {
           </p>
 
           <div className="text-center text-xs text-gray-500">
-            <p>Hint: Use demo@example.com / password to test the login</p>
+            <p>Testing credentials:</p>
+            <ul className="mt-1">
+              <li>Email: demo@example.com / Password: password</li>
+              <li>Email: user@sbi.com / Password: sbi123</li>
+              <li>Email: test@sbi.com / Password: test123</li>
+            </ul>
           </div>
         </div>
       </div>
